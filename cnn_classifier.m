@@ -2,13 +2,14 @@
 clear; clc; close all;
 
 % load the beauty ratings
-load('./analysis/OASIS_data.mat') % loads oasis_data as data
+load('./analysis/OASIS_obj_scene.mat') % loads as data
 beauty_ratings = data.beauty_mean;
 num_images = length(beauty_ratings);
 clear data;
 
 arch = 'vgg16';
-layer_path = ['./analysis/activations/', arch, '_pca_layers/'];
+category = 'Object';
+layer_path = ['./analysis/activations/', category, '/', arch, '_layers/'];
 n_layers = length(dir(fullfile(layer_path, '*.mat')));
 n_folds = 10;
 layerwise_corr = zeros(n_layers, n_folds);
@@ -54,6 +55,7 @@ plot(avg_layerwise_corr, 'LineWidth', 2);
 hold on;
 errorbar(1:n_layers, avg_layerwise_corr, sd, 'LineStyle', 'none', 'LineWidth', 0.1);
 xlim([1 n_layers+2]);
+
 % line at y=0
 hold on;
 plot([0 n_layers+2], [0 0], '--k');
@@ -62,9 +64,7 @@ ylabel('Correlation');
 title(['Laywerwise Correlation between activations and beauty ratings for ', arch]);
 subtitle(['PCs - ', n_pcs_str]);
 
-
 % ! for layer x, plotting predicted and actual beauty ratings
-
 % layer_name = 'layer_37';
 % load(fullfile('./analysis/activations/pca_layers', strcat(layer_name, '.mat')));
 
@@ -94,4 +94,3 @@ subtitle(['PCs - ', n_pcs_str]);
 % % unity line
 % hold on;
 % plot([0 10], [0 10], 'black');
-

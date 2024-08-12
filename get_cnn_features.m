@@ -1,14 +1,17 @@
 clear; clc; close all;
 addpath('./analysis/dependencies/lib/');
-
-
 % ! set params and load vars
-load('./analysis/OASIS_data.mat') % loads oasis_data as data
+load('./analysis/OASIS_obj_scene.mat') % loads as data
+
+% take subset of data table where category == 'objects'
+category = 'Object'; % either 'Object' or 'Scene'
+idx = ismember(data.Category, category);
+data = data(idx, :);
 img_set = data.img;
 clear data;
-arch = 'vgg16';
-act_save_path = ['./analysis/activations/', arch, '_layers/'];
 
+arch = 'vgg16';
+act_save_path = ['./analysis/activations/', category, '/', arch, '_layers/'];
 
 % ! extract activations for each image in img_set
 % check if folder is non empty
@@ -22,9 +25,9 @@ end
 
 % ! PCA on each activation layer to reduce dimensionality
 % load activations
-pca_save_path = ['./analysis/activations/', arch, '_pca_layers/'];
+pca_save_path = ['./analysis/activations/', category, '/', arch, '_pca_layers/'];
 
-n_components = 10;
+n_components = 200;
 for i = 1:n_layers% iterate through layers
     layer_name = strcat('layer_', num2str(i));
     load(fullfile(act_save_path, strcat(layer_name, '.mat')));
@@ -43,6 +46,4 @@ for i = 1:n_layers% iterate through layers
     
     % print
     fprintf('PCA reps saved for %s\n', layer_name);
-    
-    
 end
